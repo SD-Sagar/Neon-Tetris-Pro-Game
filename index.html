@@ -7,13 +7,13 @@
 <head>
   <!-- Basic meta tags for responsive design -->
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Neon Tetris Pro</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <!-- Main game header and score display -->
-  <h1>TETRIS PRO</h1>
+  <h1>Neon Tetris Pro</h1>
   <div class="score">Score: <span id="score">0</span> | Level: <span id="level">1</span></div>
   
   <!-- Main game container with three columns -->
@@ -50,6 +50,19 @@
   </div>
   </div>
 
+  <!-- Mobile touch controls -->
+  <div id="touchControls" class="touch-controls hidden">
+    <div class="control-row">
+      <button class="control-btn" id="moveLeft">←</button>
+      <button class="control-btn" id="rotate">↻</button>
+      <button class="control-btn" id="moveRight">→</button>
+    </div>
+    <div class="control-row">
+      <button class="control-btn" id="softDrop">↓</button>
+      <button class="control-btn hard-drop-btn" id="hardDrop">▼▼</button>
+    </div>
+  </div>
+
   <!-- Overlay for modal screens -->
 <div id="overlay"></div>
   
@@ -60,8 +73,12 @@
   <p>Professional Tetris Experience</p>
   <button onclick="startGame()" class="play-again-btn">START GAME</button>
   <div class="credits">
-    <p>Use arrow keys to play</p>
-    <p>Space for hard drop</p>
+    <p class="desktop-controls">Use arrow keys to play • Space for hard drop</p>
+    <p class="mobile-controls">Use on-screen controls to play</p>
+  </div>
+  <div class="copyright">
+    <p>Created by <strong>Sagar Dey</strong></p>
+    <p>&copy; 2024 All Rights Reserved</p>
   </div>
 </div>
 
