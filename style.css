@@ -264,6 +264,14 @@ button:hover {
   max-width: 300px;
 }
 
+.pause-content .mobile-controls {
+  display: none;
+}
+
+.pause-content .desktop-controls {
+  display: block;
+}
+
 .skull {
   font-size: 3rem;
   margin-bottom: 10px;
@@ -566,6 +574,15 @@ button:hover {
 
   .credits .mobile-controls {
     display: block;
+  }
+
+  .pause-content .desktop-controls {
+    display: none;
+  }
+
+  .pause-content .mobile-controls {
+    display: block;
+    margin-top: 15px;
   }
 
   button {
