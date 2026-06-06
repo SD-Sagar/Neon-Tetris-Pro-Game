@@ -228,6 +228,16 @@ button {
   box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
   position: relative;
   overflow: hidden;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+button span {
+  position: relative;
+  z-index: 2;
 }
 
 button::before {
@@ -241,6 +251,7 @@ button::before {
   border-radius: 50%;
   transform: translate(-50%, -50%);
   transition: width 0.6s, height 0.6s;
+  z-index: 0;
 }
 
 button:hover::before {
@@ -515,6 +526,24 @@ button:hover {
 
 /* Mobile Responsive Styles */
 @media (max-width: 768px) {
+  /* Optimize animations for mobile performance */
+  * {
+    animation-duration: 1s !important;
+  }
+  
+  h1 {
+    animation: glow-pulse-mobile 2s ease-in-out infinite;
+  }
+  
+  @keyframes glow-pulse-mobile {
+    0%, 100% { 
+      text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 20px #0ff;
+    }
+    50% { 
+      text-shadow: 0 0 10px #0ff, 0 0 20px #0ff, 0 0 30px #0ff;
+    }
+  }
+  
   body {
     padding: 5px 10px;
   }
@@ -569,11 +598,17 @@ button:hover {
     padding: 6px 10px;
     font-size: 0.65rem;
     white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
   }
 
   #tetris {
     order: 2;
     margin: 0 auto;
+    /* Simplify shadow for mobile performance */
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.6);
   }
 
   #gameCanvas {
@@ -603,6 +638,8 @@ button:hover {
   #nextCanvas {
     width: 80px;
     height: 80px;
+    /* Simplify shadow for mobile performance */
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
   }
 
   .controls-info {
@@ -621,11 +658,20 @@ button:hover {
     background: rgba(0, 0, 0, 0.95);
     z-index: 100;
     max-width: fit-content;
+    /* Simplify shadow for mobile */
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
   }
 
   #startScreen, #gameOverScreen {
     max-width: 90%;
     padding: 20px;
+    /* Simplify effects for mobile */
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+    backdrop-filter: blur(5px);
+  }
+  
+  #gameOverScreen {
+    box-shadow: 0 0 20px rgba(255, 0, 255, 0.4);
   }
 
   #startScreen h2, #gameOverScreen h2 {
@@ -656,6 +702,17 @@ button:hover {
   button {
     padding: 10px 20px;
     font-size: 0.85rem;
+  }
+  
+  /* Disable hover effects on mobile for better performance */
+  button:hover {
+    transform: none;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+  }
+  
+  button:hover::before {
+    width: 0;
+    height: 0;
   }
 }
 

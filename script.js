@@ -6,12 +6,16 @@
  * @type {CanvasRenderingContext2D} nextCtx - Next piece canvas context
  */
 const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
+const ctx = canvas.getContext('2d', { alpha: false });
 ctx.scale(20, 20);
 
 const nextCanvas = document.getElementById('nextCanvas');
-const nextCtx = nextCanvas.getContext('2d');
+const nextCtx = nextCanvas.getContext('2d', { alpha: false });
 nextCtx.scale(30, 30);
+
+// Performance optimization flags
+const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+const useOptimizedRendering = isMobileDevice;
 
 /**
  * Sound Effects - Audio objects for game sounds
@@ -355,7 +359,10 @@ function resetPlayer() {
  * @param {number} y - Row position to create particles
  */
 function createParticles(y) {
-  for (let i = 0; i < 50; i++) {
+  // Reduce particle count on mobile for better performance
+  const particleCount = useOptimizedRendering ? 30 : 50;
+  
+  for (let i = 0; i < particleCount; i++) {
     particles.push({
       x: Math.random() * canvas.width / 20,
       y: y,
@@ -387,21 +394,27 @@ function updateParticles() {
  */
 function drawParticles() {
   particles.forEach(p => {
-    // Draw glow effect
-    ctx.shadowBlur = 0.5;
-    ctx.shadowColor = p.color;
+    // Conditional shadow blur for performance
+    if (!useOptimizedRendering) {
+      ctx.shadowBlur = 0.5;
+      ctx.shadowColor = p.color;
+    }
     
     ctx.fillStyle = p.color;
     ctx.globalAlpha = p.life / 50;
     ctx.fillRect(p.x - 0.25, p.y - 0.25, 0.5, 0.5);
     
-    // Add sparkle effect
-    ctx.fillStyle = '#fff';
-    ctx.globalAlpha = (p.life / 50) * 0.6;
-    ctx.fillRect(p.x - 0.1, p.y - 0.1, 0.2, 0.2);
+    // Add sparkle effect (skip on mobile for performance)
+    if (!useOptimizedRendering) {
+      ctx.fillStyle = '#fff';
+      ctx.globalAlpha = (p.life / 50) * 0.6;
+      ctx.fillRect(p.x - 0.1, p.y - 0.1, 0.2, 0.2);
+    }
     
     ctx.globalAlpha = 1;
-    ctx.shadowBlur = 0;
+    if (!useOptimizedRendering) {
+      ctx.shadowBlur = 0;
+    }
   });
 }
 
