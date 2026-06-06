@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- 
+  Main game HTML structure for Neon Tetris Pro
+  Contains all UI components including game canvas, score displays, and screens
+-->
+<head>
+  <!-- Basic meta tags for responsive design -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neon Tetris Pro</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Main game header and score display -->
+  <h1>TETRIS PRO</h1>
+  <div class="score">Score: <span id="score">0</span> | Level: <span id="level">1</span></div>
+  
+  <!-- Main game container with three columns -->
+<div id="gameWrapper">
+  <!-- Left panel: High score display and game controls -->
+  <div id="highScoreWrapper">
+    <p>HIGH SCORE</p>
+    <div class="high-score-display"><span id="highScore">0</span></div>
+    <div class="controls">
+      <button onclick="startGame()">NEW GAME</button>
+      <button id="pauseBtn" onclick="togglePause()">PAUSE</button>
+    </div>
+  </div>
+      <!-- Center panel: Main game canvas -->
+  <div id="tetris">
+    <canvas id="gameCanvas" width="240" height="400"></canvas>
+  </div>
+      <!-- Right panel: Next piece preview and controls info -->
+  <div id="sidePanel">
+    <div id="nextWrapper">
+      <p>NEXT:</p>
+      <canvas id="nextCanvas" width="120" height="120"></canvas>
+      <div class="controls-info">
+        <h3>CONTROLS</h3>
+        <ul>
+          <li>← → : Move</li>
+          <li>↑ : Rotate</li>
+          <li>↓ : Soft Drop</li>
+          <li>Space : Hard Drop</li>
+          <li>P : Pause</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <!-- Overlay for modal screens -->
+<div id="overlay"></div>
+  
+  <!-- Start screen with game title and play button -->
+<div id="startScreen">
+  <div class="skull">🎮</div>
+  <h2>TETRIS PRO</h2>
+  <p>Professional Tetris Experience</p>
+  <button onclick="startGame()" class="play-again-btn">START GAME</button>
+  <div class="credits">
+    <p>Use arrow keys to play</p>
+    <p>Space for hard drop</p>
+  </div>
+</div>
+
+  <!-- Game over screen showing final score -->
+<div id="gameOverScreen" class="hidden">
+  <div class="skull">💀</div>
+  <h2>GAME OVER</h2>
+  <p>Your score: <span id="finalScore">0</span></p>
+  <button onclick="startGame()" class="play-again-btn">PLAY AGAIN</button>
+</div>
+
+  <!-- Pause screen with game controls reminder -->
+<div id="pauseScreen" class="hidden">
+  <div class="pause-content">
+    <h2>PAUSED</h2>
+    <p>Press <strong>P</strong> to continue</p>
+    <div class="controls-hint">
+      <p>← → Move | ↑ Rotate | ↓ Drop | Space Hard Drop</p>
+    </div>
+  </div>
+</div>
+
+  <script src="script.js"></script>
+</body>
+</html>
