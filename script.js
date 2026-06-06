@@ -279,14 +279,19 @@ function playerMove(dir) {
 function playerDrop() {
   if (gamePaused) return;
   player.pos.y++;
+  dropCounter = 0;
+  
   if (collide(arena, player)) {
     player.pos.y--;
     merge(arena, player);
     playSound(sounds.drop);
     resetPlayer();
     sweep();
+  } else {
+    // Soft drop bonus: 1 point per cell
+    score += 1;
+    updateScore();
   }
-  dropCounter = 0;
 }
 
 /**
@@ -350,14 +355,14 @@ function resetPlayer() {
  * @param {number} y - Row position to create particles
  */
 function createParticles(y) {
-  for (let i = 0; i < 30; i++) {
+  for (let i = 0; i < 50; i++) {
     particles.push({
       x: Math.random() * canvas.width / 20,
       y: y,
       color: colors[Math.floor(Math.random() * colors.length)],
-      speedX: (Math.random() - 0.5) * 0.5,
-      speedY: Math.random() * -1.5,
-      life: 30 + Math.random() * 20
+      speedX: (Math.random() - 0.5) * 0.8,
+      speedY: Math.random() * -2.5 - 0.5,
+      life: 40 + Math.random() * 30
     });
   }
 }
@@ -382,15 +387,31 @@ function updateParticles() {
  */
 function drawParticles() {
   particles.forEach(p => {
+    // Draw glow effect
+    ctx.shadowBlur = 0.5;
+    ctx.shadowColor = p.color;
+    
     ctx.fillStyle = p.color;
     ctx.globalAlpha = p.life / 50;
-    ctx.fillRect(p.x, p.y, 0.5, 0.5);
+    ctx.fillRect(p.x - 0.25, p.y - 0.25, 0.5, 0.5);
+    
+    // Add sparkle effect
+    ctx.fillStyle = '#fff';
+    ctx.globalAlpha = (p.life / 50) * 0.6;
+    ctx.fillRect(p.x - 0.1, p.y - 0.1, 0.2, 0.2);
+    
     ctx.globalAlpha = 1;
+    ctx.shadowBlur = 0;
   });
 }
 
 /**
  * Clears completed rows, updates score and level
+ * Implements standard Tetris scoring system:
+ * - Single: 100 × level
+ * - Double: 300 × level
+ * - Triple: 500 × level
+ * - Tetris: 800 × level
  * @returns {number} Number of rows cleared
  */
 function sweep() {
@@ -409,9 +430,29 @@ function sweep() {
 
   if (rowsCleared > 0) {
     playSound(sounds.lineClear);
-    score += rowsCleared * 10;
-    level = Math.floor(score / 30) + 1;
-    dropInterval = Math.max(100, 1000 - (level - 1) * 100);
+    
+    // Standard Tetris scoring
+    const scoreTable = {
+      1: 100,   // Single
+      2: 300,   // Double
+      3: 500,   // Triple
+      4: 800    // Tetris (4 lines)
+    };
+    
+    const basePoints = scoreTable[rowsCleared] || 100;
+    const earnedPoints = basePoints * level;
+    score += earnedPoints;
+    
+    // Show points earned (optional: could add visual feedback here)
+    console.log(`+${earnedPoints} points (${rowsCleared} line${rowsCleared > 1 ? 's' : ''})`);
+    
+    // Level up every 10 lines cleared
+    const newLevel = Math.floor(score / 1000) + 1;
+    if (newLevel > level) {
+      level = newLevel;
+      dropInterval = Math.max(100, 1000 - (level - 1) * 80);
+    }
+    
     updateScore();
   }
 }
@@ -430,18 +471,48 @@ function drawMatrix(matrix, offset, color, context = ctx, isGhost = false) {
       if (value !== 0) {
         if (isGhost) {
           context.strokeStyle = color;
-          context.globalAlpha = 0.5; // Slightly more visible for outlines
-          context.setLineDash([0.2, 0.3]); // Dash pattern (small dash, small gap)
-          context.lineWidth = 0.1;
-          context.strokeRect(x + offset.x + 0.1, y + offset.y + 0.1, 0.8, 0.8); // Slightly smaller to fit dashes
-          context.setLineDash([]); // Reset for other drawings
+          context.globalAlpha = 0.4;
+          context.setLineDash([0.15, 0.2]);
+          context.lineWidth = 0.15;
+          context.strokeRect(x + offset.x + 0.05, y + offset.y + 0.05, 0.9, 0.9);
+          
+          // Add subtle fill
+          context.fillStyle = color;
+          context.globalAlpha = 0.1;
+          context.fillRect(x + offset.x + 0.1, y + offset.y + 0.1, 0.8, 0.8);
+          
+          context.setLineDash([]);
           context.globalAlpha = 1;
         } else {
-          context.fillStyle = color;
+          // Main block with gradient
+          const gradient = context.createLinearGradient(
+            x + offset.x, y + offset.y,
+            x + offset.x + 1, y + offset.y + 1
+          );
+          
+          // Lighter top-left, darker bottom-right for 3D effect
+          gradient.addColorStop(0, lightenColor(color, 40));
+          gradient.addColorStop(0.5, color);
+          gradient.addColorStop(1, darkenColor(color, 30));
+          
+          context.fillStyle = gradient;
           context.fillRect(x + offset.x, y + offset.y, 1, 1);
+          
+          // Inner highlight for glass effect
+          context.fillStyle = 'rgba(255, 255, 255, 0.3)';
+          context.fillRect(x + offset.x + 0.1, y + offset.y + 0.1, 0.8, 0.3);
+          
+          // Outer border
           context.strokeStyle = '#000';
-          context.lineWidth = 0.05;
+          context.lineWidth = 0.08;
           context.strokeRect(x + offset.x, y + offset.y, 1, 1);
+          
+          // Inner glow border
+          context.strokeStyle = color;
+          context.lineWidth = 0.06;
+          context.globalAlpha = 0.8;
+          context.strokeRect(x + offset.x + 0.05, y + offset.y + 0.05, 0.9, 0.9);
+          context.globalAlpha = 1;
         }
       }
     });
@@ -449,17 +520,83 @@ function drawMatrix(matrix, offset, color, context = ctx, isGhost = false) {
 }
 
 /**
+ * Lighten a hex color
+ * @param {string} color - Hex color
+ * @param {number} percent - Percentage to lighten
+ * @returns {string} Lighter color
+ */
+function lightenColor(color, percent) {
+  const num = parseInt(color.replace("#",""), 16);
+  const amt = Math.round(2.55 * percent);
+  const R = Math.min(255, (num >> 16) + amt);
+  const G = Math.min(255, (num >> 8 & 0x00FF) + amt);
+  const B = Math.min(255, (num & 0x0000FF) + amt);
+  return "#" + (0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1);
+}
+
+/**
+ * Darken a hex color
+ * @param {string} color - Hex color
+ * @param {number} percent - Percentage to darken
+ * @returns {string} Darker color
+ */
+function darkenColor(color, percent) {
+  const num = parseInt(color.replace("#",""), 16);
+  const amt = Math.round(2.55 * percent);
+  const R = Math.max(0, (num >> 16) - amt);
+  const G = Math.max(0, (num >> 8 & 0x00FF) - amt);
+  const B = Math.max(0, (num & 0x0000FF) - amt);
+  return "#" + (0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1);
+}
+
+/**
  * Draws the current game arena state
  */
 function drawArena() {
+  // Draw grid pattern first
+  ctx.strokeStyle = 'rgba(0, 255, 255, 0.05)';
+  ctx.lineWidth = 0.02;
+  for (let x = 0; x < arena[0].length; x++) {
+    ctx.beginPath();
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, arena.length);
+    ctx.stroke();
+  }
+  for (let y = 0; y < arena.length; y++) {
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    ctx.lineTo(arena[0].length, y);
+    ctx.stroke();
+  }
+  
+  // Draw blocks
   arena.forEach((row, y) => {
     row.forEach((cell, x) => {
       if (cell !== 0) {
-        ctx.fillStyle = cell.color;
+        // Main block with gradient
+        const gradient = ctx.createLinearGradient(x, y, x + 1, y + 1);
+        gradient.addColorStop(0, lightenColor(cell.color, 40));
+        gradient.addColorStop(0.5, cell.color);
+        gradient.addColorStop(1, darkenColor(cell.color, 30));
+        
+        ctx.fillStyle = gradient;
         ctx.fillRect(x, y, 1, 1);
+        
+        // Inner highlight
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+        ctx.fillRect(x + 0.1, y + 0.1, 0.8, 0.3);
+        
+        // Outer border
         ctx.strokeStyle = '#000';
-        ctx.lineWidth = 0.05;
+        ctx.lineWidth = 0.08;
         ctx.strokeRect(x, y, 1, 1);
+        
+        // Inner glow
+        ctx.strokeStyle = cell.color;
+        ctx.lineWidth = 0.06;
+        ctx.globalAlpha = 0.8;
+        ctx.strokeRect(x + 0.05, y + 0.05, 0.9, 0.9);
+        ctx.globalAlpha = 1;
       }
     });
   });
@@ -469,8 +606,13 @@ function drawArena() {
  * Main draw function - renders game state including arena, pieces and particles
  */
 function draw() {
-  ctx.fillStyle = flashEffect && flashTimer % 2 === 0 ? '#fff' : '#000';
+  // Background with subtle gradient
+  const bgGradient = ctx.createLinearGradient(0, 0, 0, canvas.height / 20);
+  bgGradient.addColorStop(0, '#0a0515');
+  bgGradient.addColorStop(1, '#000000');
+  ctx.fillStyle = flashEffect && flashTimer % 2 === 0 ? '#fff' : bgGradient;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
+  
   drawArena();
   
   // Draw ghost piece
@@ -579,12 +721,19 @@ document.addEventListener('keydown', e => {
       if (gamePaused) return;
       flashEffect = true;
       flashTimer = 5;
+      
+      // Calculate hard drop distance for bonus points (2 points per cell)
+      const startY = player.pos.y;
       while (!collide(arena, player)) player.pos.y++;
       player.pos.y--;
+      const dropDistance = player.pos.y - startY;
+      score += dropDistance * 2;
+      
       merge(arena, player);
       playSound(sounds.drop);
       resetPlayer();
       sweep();
+      updateScore();
       break;
   }
 });
@@ -654,12 +803,19 @@ function initTouchControls() {
       if (gamePaused || !gameRunning) return;
       flashEffect = true;
       flashTimer = 5;
+      
+      // Calculate hard drop distance for bonus points (2 points per cell)
+      const startY = player.pos.y;
       while (!collide(arena, player)) player.pos.y++;
       player.pos.y--;
+      const dropDistance = player.pos.y - startY;
+      score += dropDistance * 2;
+      
       merge(arena, player);
       playSound(sounds.drop);
       resetPlayer();
       sweep();
+      updateScore();
     });
   }
 }

@@ -4,7 +4,8 @@
 }
 
 body {
-  background-color: #080312;
+  background: linear-gradient(135deg, #080312 0%, #0d0520 50%, #080312 100%);
+  background-attachment: fixed;
   color: #0ff;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   text-align: center;
@@ -12,14 +13,44 @@ body {
   padding: 20px;
   overflow-x: hidden;
   min-height: 100vh;
+  position: relative;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(0, 255, 255, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 0, 255, 0.03) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+body > * {
+  position: relative;
+  z-index: 1;
 }
 
 h1 {
   font-size: 2.5rem;
-  text-shadow: 0 0 5px #0ff, 0 0 10px #0ff;
+  text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 20px #0ff, 0 0 40px #0ff;
   margin-bottom: 10px;
   letter-spacing: 3px;
   text-transform: uppercase;
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+
+@keyframes glow-pulse {
+  0%, 100% { 
+    text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 20px #0ff, 0 0 40px #0ff;
+  }
+  50% { 
+    text-shadow: 0 0 10px #0ff, 0 0 20px #0ff, 0 0 30px #0ff, 0 0 60px #0ff;
+  }
 }
 
 .score {
@@ -42,9 +73,13 @@ h1 {
 #tetris {
   order: 2;
   border: 3px solid #0ff;
-  box-shadow: 0 0 15px #0ff;
+  box-shadow: 
+    0 0 15px #0ff,
+    0 0 30px rgba(0, 255, 255, 0.5),
+    inset 0 0 20px rgba(0, 255, 255, 0.1);
   border-radius: 5px;
   position: relative;
+  background: rgba(0, 0, 0, 0.5);
 }
 
 #gameCanvas {
@@ -88,8 +123,10 @@ h1 {
   font-family: 'Press Start 2P', cursive;
   font-size: 1.2rem;
   color: #ff0;
-  text-shadow: 0 0 5px #ff0;
-  box-shadow: 0 0 10px rgba(255, 255, 0, 0.3);
+  text-shadow: 0 0 5px #ff0, 0 0 10px #ff0;
+  box-shadow: 
+    0 0 10px rgba(255, 255, 0, 0.5),
+    inset 0 0 10px rgba(255, 255, 0, 0.1);
   min-height: 60px;
   display: flex;
   align-items: center;
@@ -114,6 +151,9 @@ h1 {
   background-color: #000;
   border: 2px solid #0ff;
   border-radius: 5px;
+  box-shadow: 
+    0 0 10px rgba(0, 255, 255, 0.5),
+    inset 0 0 15px rgba(0, 255, 255, 0.1);
 }
 
 .controls-info {
@@ -181,15 +221,36 @@ button {
   border-radius: 5px;
   font-weight: bold;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s;
   text-transform: uppercase;
   font-size: 0.9rem;
   letter-spacing: 1px;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+  position: relative;
+  overflow: hidden;
+}
+
+button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+button:hover::before {
+  width: 300px;
+  height: 300px;
 }
 
 button:hover {
   transform: scale(1.05);
-  box-shadow: 0 0 10px #0ff;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.8), 0 0 30px rgba(0, 255, 255, 0.4);
 }
 
 #pauseBtn {
@@ -229,15 +290,22 @@ button:hover {
 }
 
 #startScreen, #gameOverScreen {
-  background: rgba(0,0,0,0.9);
+  background: rgba(0,0,0,0.95);
   border: 3px solid #0ff;
   padding: 30px;
   border-radius: 10px;
   max-width: 300px;
+  box-shadow: 
+    0 0 30px rgba(0, 255, 255, 0.5),
+    inset 0 0 20px rgba(0, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
 }
 
 #gameOverScreen {
   border-color: #f0f;
+  box-shadow: 
+    0 0 30px rgba(255, 0, 255, 0.5),
+    inset 0 0 20px rgba(255, 0, 255, 0.1);
 }
 
 #pauseScreen {
