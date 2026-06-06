@@ -332,41 +332,98 @@ button:hover {
 /* Touch Controls for Mobile */
 .touch-controls {
   display: none;
-  flex-direction: column;
-  gap: 10px;
-  margin: 20px auto;
-  max-width: 300px;
+  margin: 15px auto 10px;
+  max-width: 100%;
   padding: 15px;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.7);
   border: 2px solid #0ff;
-  border-radius: 10px;
+  border-radius: 15px;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+}
+
+.controls-layout {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.dpad-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dpad-row {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.dpad-spacer {
+  width: 60px;
+  height: 60px;
+}
+
+.action-section {
+  display: flex;
+  align-items: center;
+}
+
+.control-btn {
+  width: 60px;
+  height: 60px;
+  font-size: 1.4rem;
+  background: rgba(0, 255, 255, 0.2);
+  border: 2px solid #0ff;
+  color: #0ff;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.1s;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dpad-btn {
+  background: rgba(0, 255, 255, 0.15);
+  box-shadow: 0 2px 8px rgba(0, 255, 255, 0.2);
+}
+
+.control-btn:active {
+  background: rgba(0, 255, 255, 0.6);
+  transform: scale(0.92);
+  box-shadow: 0 0 20px #0ff;
+}
+
+.action-btn {
+  width: 80px;
+  height: 80px;
+  background: rgba(255, 0, 255, 0.2);
+  border-color: #f0f;
+  color: #f0f;
+  font-size: 0.9rem;
+  border-radius: 50%;
+  box-shadow: 0 4px 15px rgba(255, 0, 255, 0.3);
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.action-btn:active {
+  background: rgba(255, 0, 255, 0.6);
+  box-shadow: 0 0 25px #f0f;
 }
 
 .control-row {
   display: flex;
   justify-content: center;
   gap: 10px;
-}
-
-.control-btn {
-  width: 70px;
-  height: 70px;
-  font-size: 1.5rem;
-  background: rgba(0, 255, 255, 0.2);
-  border: 2px solid #0ff;
-  color: #0ff;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.1s;
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: manipulation;
-}
-
-.control-btn:active {
-  background: rgba(0, 255, 255, 0.5);
-  transform: scale(0.95);
-  box-shadow: 0 0 15px #0ff;
 }
 
 .hard-drop-btn {
@@ -383,23 +440,23 @@ button:hover {
 /* Mobile Responsive Styles */
 @media (max-width: 768px) {
   body {
-    padding: 10px;
+    padding: 5px 10px;
   }
 
   h1 {
-    font-size: 1.8rem;
-    margin-bottom: 8px;
+    font-size: 1.5rem;
+    margin-bottom: 5px;
   }
 
   .score {
-    font-size: 1rem;
-    margin-bottom: 10px;
+    font-size: 0.9rem;
+    margin-bottom: 8px;
   }
 
   #gameWrapper {
     flex-direction: column;
     align-items: center;
-    gap: 15px;
+    gap: 10px;
     max-width: 100%;
   }
 
@@ -407,33 +464,34 @@ button:hover {
     order: 1;
     width: 100%;
     max-width: 300px;
-    margin: 0 auto 10px;
+    margin: 0 auto 5px;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
   }
 
   #highScoreWrapper p {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
+    margin-bottom: 3px;
   }
 
   .high-score-display {
-    min-height: 40px;
-    padding: 8px;
-    font-size: 1rem;
+    min-height: 35px;
+    padding: 6px;
+    font-size: 0.9rem;
   }
 
   #highScoreWrapper .controls {
     display: flex;
     flex-direction: row;
-    gap: 8px;
+    gap: 6px;
     margin: 0;
     width: auto;
   }
 
   #highScoreWrapper .controls button {
-    padding: 8px 12px;
-    font-size: 0.7rem;
+    padding: 6px 10px;
+    font-size: 0.65rem;
     white-space: nowrap;
   }
 
@@ -444,7 +502,7 @@ button:hover {
 
   #gameCanvas {
     width: 100%;
-    max-width: 280px;
+    max-width: 240px;
     height: auto;
     aspect-ratio: 3 / 5;
   }
@@ -458,11 +516,17 @@ button:hover {
 
   #nextWrapper {
     width: 100%;
+    margin-bottom: 0;
+  }
+
+  #nextWrapper p {
+    margin-bottom: 5px;
+    font-size: 0.85rem;
   }
 
   #nextCanvas {
-    width: 100px;
-    height: 100px;
+    width: 80px;
+    height: 80px;
   }
 
   .controls-info {
@@ -472,6 +536,16 @@ button:hover {
   .touch-controls {
     display: flex;
     order: 4;
+    position: sticky;
+    bottom: 0;
+    margin: 10px -10px 0;
+    padding: 12px;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 100;
   }
 
   #startScreen, #gameOverScreen {
@@ -503,25 +577,47 @@ button:hover {
 
 @media (max-width: 480px) {
   body {
-    padding: 5px;
+    padding: 3px 8px;
   }
 
   h1 {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
+    margin-bottom: 3px;
   }
 
   .score {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+    margin-bottom: 5px;
   }
 
   #gameCanvas {
-    max-width: 240px;
+    max-width: 220px;
+  }
+
+  #nextCanvas {
+    width: 70px;
+    height: 70px;
+  }
+
+  .dpad-spacer {
+    width: 55px;
+    height: 55px;
   }
 
   .control-btn {
-    width: 60px;
-    height: 60px;
-    font-size: 1.3rem;
+    width: 55px;
+    height: 55px;
+    font-size: 1.2rem;
+  }
+
+  .action-btn {
+    width: 70px;
+    height: 70px;
+    font-size: 0.8rem;
+  }
+
+  .controls-layout {
+    gap: 15px;
   }
 
   #startScreen, #gameOverScreen {

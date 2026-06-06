@@ -52,14 +52,25 @@
 
   <!-- Mobile touch controls -->
   <div id="touchControls" class="touch-controls hidden">
-    <div class="control-row">
-      <button class="control-btn" id="moveLeft">←</button>
-      <button class="control-btn" id="rotate">↻</button>
-      <button class="control-btn" id="moveRight">→</button>
-    </div>
-    <div class="control-row">
-      <button class="control-btn" id="softDrop">↓</button>
-      <button class="control-btn hard-drop-btn" id="hardDrop">▼▼</button>
+    <div class="controls-layout">
+      <!-- Left side: D-pad navigation -->
+      <div class="dpad-section">
+        <div class="dpad-row">
+          <div class="dpad-spacer"></div>
+          <button class="control-btn dpad-btn" id="rotate">↻</button>
+          <div class="dpad-spacer"></div>
+        </div>
+        <div class="dpad-row">
+          <button class="control-btn dpad-btn" id="moveLeft">←</button>
+          <button class="control-btn dpad-btn" id="softDrop">↓</button>
+          <button class="control-btn dpad-btn" id="moveRight">→</button>
+        </div>
+      </div>
+      
+      <!-- Right side: Action button -->
+      <div class="action-section">
+        <button class="control-btn action-btn" id="hardDrop">DROP</button>
+      </div>
     </div>
   </div>
 
