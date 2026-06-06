@@ -603,3 +603,77 @@ document.addEventListener('keyup', e => {
     spaceKeyPressed = false;
   }
 });
+
+// Touch Controls for Mobile
+function initTouchControls() {
+  const isMobile = window.innerWidth <= 768;
+  const touchControls = document.getElementById('touchControls');
+  
+  if (isMobile && touchControls) {
+    touchControls.classList.remove('hidden');
+  }
+
+  // Touch control buttons
+  const moveLeftBtn = document.getElementById('moveLeft');
+  const moveRightBtn = document.getElementById('moveRight');
+  const rotateBtn = document.getElementById('rotate');
+  const softDropBtn = document.getElementById('softDrop');
+  const hardDropBtn = document.getElementById('hardDrop');
+
+  if (moveLeftBtn) {
+    moveLeftBtn.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      playerMove(-1);
+    });
+  }
+
+  if (moveRightBtn) {
+    moveRightBtn.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      playerMove(1);
+    });
+  }
+
+  if (rotateBtn) {
+    rotateBtn.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      rotate(player.matrix, 1);
+    });
+  }
+
+  if (softDropBtn) {
+    softDropBtn.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      playerDrop();
+    });
+  }
+
+  if (hardDropBtn) {
+    hardDropBtn.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      if (gamePaused || !gameRunning) return;
+      flashEffect = true;
+      flashTimer = 5;
+      while (!collide(arena, player)) player.pos.y++;
+      player.pos.y--;
+      merge(arena, player);
+      playSound(sounds.drop);
+      resetPlayer();
+      sweep();
+    });
+  }
+}
+
+// Initialize touch controls on load
+window.addEventListener('load', initTouchControls);
+window.addEventListener('resize', () => {
+  const isMobile = window.innerWidth <= 768;
+  const touchControls = document.getElementById('touchControls');
+  if (touchControls) {
+    if (isMobile) {
+      touchControls.classList.remove('hidden');
+    } else {
+      touchControls.classList.add('hidden');
+    }
+  }
+});
